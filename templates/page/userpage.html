@@ -1,0 +1,12 @@
+<div class="container">
+    <div class="col-md-12">
+        <img src="data:image/png;base64, {{ user.picture|safe }}" class="img-circle" style="margin-left:auto;margin-right:auto;display:block;"/>
+    </div>
+    <div class="col-md-12">
+        <p class="h2 text-center">{{ user.display_name }}</p>
+    </div>
+
+    {% if is_owner == True %}
+    <input value="{{ user.display_name }}" type="text" name="changeDisplay" id="changeDisplay"/>
+    {% endif %}
+</div>
