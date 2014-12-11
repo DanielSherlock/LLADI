@@ -5,7 +5,10 @@ from LLADI.database import users
 
 def valid_login(username, password):
     request_user = users.User(username=username)
-    return pwd_context.verify(password, request_user.password)
+    if request_user.exists:
+        return pwd_context.verify(password, request_user.password)
+    else:
+        return False
 
 
 def log_in(username):

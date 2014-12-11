@@ -1,5 +1,8 @@
 <div class="container">
-    <form action="/login/" method="post">
+    {% if failure %}
+    <p class="text-danger h5">Invalid Username or Password</p>
+    {% endif %}
+    <form action="/login/?next={{ request.args.get('next') }}" method="post">
         <div class="form-group">
             <label for="loginUsername">Username</label>
             <input class="form-control" type="text" name="loginUsername" id="loginUsername"

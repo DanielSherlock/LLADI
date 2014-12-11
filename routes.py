@@ -24,11 +24,16 @@ def login():
                 else:
                     return redirect(url_for('home'))
             else:
-                return redirect(url_for('login') + '?failed=1')
+                if request.args.get('next'):
+                    return redirect(url_for('login') + '?failed=1&next=' + request.args.get('next'))
+                else:
+                    return redirect(url_for('login') + '?failed=1')
         else:
             return redirect(request.args.get('next'))
     else:
-        page = render_template('page/login.html')
+        cu = current_user()
+        failure = request.args.get('failed')
+        page = render_template('page/login.html', failure=failure)
         return render_template('global/frame.html', content=page, page="login", logged=cu)
 
 
@@ -45,12 +50,9 @@ def logout():
 def user(userid):
     cu = current_user()
     pu = users.User(uuid=userid)
-    if cu.uuid == pu.uuid:
-        is_owner = True
-    else:
-        is_owner = False
-    page = render_template('page/userpage.html', user=pu, is_owner=is_owner)
+    page = render_template('page/userpage.html', user=pu)
     return render_template('global/frame.html', content=page, page="User", logged=cu)
+
 
 if __name__ == '__main__':
     app.secret_key = '~\xaa\xaf\xdf.\xb8d\xe6,\xdd\xfd\x8eD[\x94\xaeQku\xf6{\xa0\xd9a'

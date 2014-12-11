@@ -26,6 +26,7 @@
             <li><a href="" id="login_button" data-toggle="modal" data-target=".modal">Login</a></li>
             {% else %}
             <li><a href="/user/{{ logged.uuid }}">{{ logged.display_name }}</a></li>
+            <li><a href="/logout?next={{ request.url }}">Logout</a></li>
             {% endif %}
         </ul>
 
@@ -40,7 +41,7 @@
                 <h4 class="modal-title">Login</h4>
             </div>
             <div class="modal-body">
-                <form action="/login/" method="post">
+                <form action="/login/?next={{ request.url }}" method="post">
                     <div class="form-group">
                         <label for="loginUsername">Username</label>
                         <input class="form-control" type="text" name="loginUsername" id="loginUsername"
