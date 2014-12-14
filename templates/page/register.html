@@ -1,0 +1,54 @@
+<div class="container">
+    {% if errors %}
+    <div class="bg-danger h6" style="padding:10px;">
+        <ul class="" style="margin:0;">
+            {% if 'username_length' in errors %}
+            <li>Username must be at least 8 Characters Long</li>
+            {% endif %}
+            {% if 'password_length' in errors %}
+            <li>Password must be at least 8 Characters Long</li>
+            {% endif %}
+            {% if 'password_length' in errors %}
+            <li>Password must be at least 8 Characters Long</li>
+            {% endif %}
+            {% if 'display_name_length' in errors %}
+            <li>Display Name must be at least 1 Character Long</li>
+            {% endif %}
+            {% if 'display_name_whitespace' in errors %}
+            <li>Invalid use of Whitespace in Display Name</li>
+            {% endif %}
+            {% if 'password_no_match' in errors %}
+            <li>Entered Passwords do not Match</li>
+            {% endif %}
+            {% if 'username_already_exists' in errors %}
+            <li>Username is Already Taken</li>
+            {% endif %}
+        </ul>
+    </div>
+    {% endif %}
+    <form action="/register/" method="post">
+        <div class="form-group">
+            <label for="registerUsername">Username</label>
+            <input class="form-control" type="text" name="registerUsername" id="registerUsername"
+                   placeholder="Username"/>
+        </div>
+        <div class="form-group">
+            <label for="registerDisplayName">Display Name</label>
+            <input class="form-control" type="text" name="registerDisplayName" id="registerDisplayName"
+                   placeholder="Display Name"/>
+        </div>
+        <div class="form-group">
+            <label for="registerPassword">Password</label>
+            <input class="form-control" type="password" name="registerPassword" id="registerPassword"
+                   placeholder="Password"/>
+        </div>
+        <div class="form-group">
+            <label for="registerRepeatPassword">Password</label>
+            <input class="form-control" type="password" name="registerRepeatPassword" id="registerRepeatPassword"
+                   placeholder="Repeat Password"/>
+        </div>
+        <div class="form-group">
+            <input class="btn btn-primary form-control" type="submit" value="Register"/>
+        </div>
+    </form>
+</div>

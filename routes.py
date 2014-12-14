@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, session, redirect, url_for, re
-from LLADI.database import users
+from flask import Flask, render_template, request, session, redirect, url_for
+from LLADI.database import users, follows
 from LLADI.functions.login import valid_login, log_in
 from LLADI.functions.users import current_user
-from LLADI.functions.register import register_user
+from LLADI.functions.register import register_user, validate_register
+from LLADI.functions.follow import validate_follow
+import re
 
 app = Flask(__name__)
 
@@ -55,32 +57,99 @@ def register():
         register_repeat_password = request.form['registerRepeatPassword']
         register_display_name = request.form['registerDisplayName']
         errors = []
-        if len(register_username) <= 8:
+        if len(register_username) < 8:
             errors.append('username_length')
-        if len(register_password) <= 8:
+        if len(register_password) < 8:
             errors.append('password_length')
-        if len(register_display_name) <= 1:
+        if len(register_display_name) == 0:
             errors.append('display_name_length')
         if len(re.findall('(^\s+|\s\s+|\s+$)', register_display_name)) != 0:
             errors.append('display_name_whitespace')
         if register_password != register_repeat_password:
             errors.append('password_no_match')
-        query_string = "?="
+        if not validate_register(register_username):
+            errors.append('username_already_exists')
+        query_string = "?"
         for error in errors:
-            query_string += error + "&"
+            query_string += error + "=1&"
         query_string.strip("&")
         if len(errors):
             return redirect(url_for('register') + query_string)
         else:
             register_user(register_username, register_password, register_display_name)
+            return redirect(url_for('home'))
+    else:
+        errors = []
+        if request.args.get('username_length'):
+            errors.append('username_length')
+        if request.args.get('password_length'):
+            errors.append('password_length')
+        if request.args.get('display_name_length'):
+            errors.append('display_name_length')
+        if request.args.get('display_name_whitespace'):
+            errors.append('display_name_whitespace')
+        if request.args.get('password_no_match'):
+            errors.append('password_no_match')
+        if request.args.get('username_already_exists'):
+            errors.append('username_already_exists')
+        page = render_template('page/register.html', errors=errors)
+        cu = current_user()
+        return render_template('global/frame.html', content=page, page="register", logged=cu)
 
 
 @app.route('/user/<userid>')
 def user(userid):
     cu = current_user()
     pu = users.User(uuid=userid)
-    page = render_template('page/userpage.html', user=pu)
-    return render_template('global/frame.html', content=page, page="User", logged=cu)
+    user_follows = []
+    user_followed_by = []
+    if len(pu.follows):
+        for followed_user in pu.follows:
+            user_follows.append(users.User(uuid=followed_user[0]))
+    if len(pu.followed_by):
+        for followed_user in pu.followed_by:
+            user_followed_by.append(users.User(uuid=followed_user[0]))
+    following = "no_follow"
+    if cu:
+        following = "False"
+        for check_user in user_followed_by:
+            if check_user.uuid == cu.uuid:
+                following = "True"
+    print(following)
+    page = render_template('page/userpage.html', user=pu, logged=cu, follows=user_follows, followed_by=user_followed_by,
+                           following=following)
+    return render_template('global/frame.html', content=page, page="user", logged=cu)
+
+
+@app.route('/user/', methods=['GET', 'POST'])
+def user_search():
+    if request.method == "POST":
+        results = users.search_user(request.form['searchUser'])
+        cu = current_user()
+        page = render_template('page/usersearch.html', results=results)
+        return render_template('global/frame.html', content=page, page="user", logged=cu)
+
+    else:
+        cu = current_user()
+        page = render_template('page/usersearch.html')
+        return render_template('global/frame.html', content=page, page="user", logged=cu)
+
+
+@app.route('/follow/', methods=['GET', 'POST'])
+def follow():
+    follower = current_user().uuid
+    followee = users.User(uuid=request.form['followee']).uuid
+    if validate_follow(follower, followee):
+        follows.new_follow(follower, followee)
+    return redirect(request.args.get('next'))
+
+
+@app.route('/unfollow/', methods=['GET', 'POST'])
+def unfollow():
+    follower = current_user().uuid
+    followee = users.User(uuid=request.form['followee']).uuid
+    follows.remove_follow(follower, followee)
+    return redirect(request.args.get('next'))
 
 
 if __name__ == '__main__':

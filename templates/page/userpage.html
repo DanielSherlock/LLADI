@@ -1,8 +1,69 @@
 <div class="container">
     <div class="col-md-12">
-        <img src="data:image/png;base64, {{ user.picture|safe }}" class="img-circle" style="margin-left:auto;margin-right:auto;display:block;"/>
+        <img src="data:image/png;base64, {{ user.picture|safe }}" class="img-circle"
+             style="margin-left:auto;margin-right:auto;display:block;"/>
     </div>
     <div class="col-md-12">
         <p class="h2 text-center">{{ user.display_name }}</p>
+    </div>
+    {% if logged.uuid != user.uuid %}
+    {% if following == "no_follow" %}
+    {% elif following == "False" %}
+    <form action="/follow/?next={{ request.url }}" method="post">
+        <input name="followee" type="hidden" value="{{ user.uuid }}"/>
+
+        <div class="col-md-12 text-center">
+            <input class="btn btn-primary" type="submit" value="Follow"/>
+        </div>
+    </form>
+    {% elif following == "True" %}
+    <form action="/unfollow/?next={{ request.url }}" method="post">
+        <input name="followee" type="hidden" value="{{ user.uuid }}"/>
+
+        <div class="col-md-12 text-center">
+            <input class="btn btn-warning" type="submit" value="Unfollow"/>
+        </div>
+    </form>
+    {% endif %}
+    {% endif %}
+    <div class="container well col-md-5">
+        <h3>Follows</h3>
+        <ul class="list-unstyled">
+            {% if follows %}
+            {% for fuser in follows %}
+            <li>
+                <img src="data:image/png;base64, {{ fuser.picture|safe }}" class="img-circle"
+                     style="height:3em;"/>
+                <a href="/user/{{ fuser.uuid }}">{{ fuser.display_name }}</a>
+            </li>
+            {% endfor %}
+            {% else %}
+            {% if logged.uuid != user.uuid %}
+            <li>{{ user.display_name }} is not following anyone</li>
+            {% else %}
+            <li>You are not following anyone</li>
+            {% endif %}
+            {% endif %}
+        </ul>
+    </div>
+    <div class="container well col-md-offset-2 col-md-5">
+        <h3>Is Followed By</h3>
+        <ul class="list-unstyled">
+            {% if followed_by %}
+            {% for fuser in followed_by %}
+            <li>
+                <img src="data:image/png;base64, {{ fuser.picture|safe }}" class="img-circle"
+                     style="height:3em;"/>
+                <a href="/user/{{ fuser.uuid }}">{{ fuser.display_name }}</a>
+            </li>
+            {% endfor %}
+            {% else %}
+            {% if logged.uuid != user.uuid %}
+            <li>{{ user.display_name }} is not following anyone</li>
+            {% else %}
+            <li>You are not following anyone</li>
+            {% endif %}
+            {% endif %}
+        </ul>
     </div>
 </div>

@@ -20,6 +20,8 @@
     <div class="navbar-collapse collapse navbar-responsive-collapse">
         <ul class="nav navbar-nav">
             <li {% if page=="home" %} class="active" {% endif %}><a href="/">Home</a></li>
+            <li {% if page=="user" %} class="active" {% endif %}><a href="/user/">User</a></li>
+
         </ul>
         <ul class="nav navbar-nav navbar-right">
             {% if logged == False %}
