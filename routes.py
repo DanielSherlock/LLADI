@@ -4,6 +4,8 @@ from LLADI.functions.login import valid_login, log_in
 from LLADI.functions.users import current_user
 from LLADI.functions.register import register_user, validate_register
 from LLADI.functions.follow import validate_follow
+from LLADI.functions.feeds import create_feed
+
 import re
 
 app = Flask(__name__)
@@ -151,6 +153,16 @@ def unfollow():
     follows.remove_follow(follower, followee)
     return redirect(request.args.get('next'))
 
+
+@app.route('/feed/')
+def feed():
+    cu = current_user()
+    if not cu:
+        return redirect(url_for('login')+"?next=" + url_for('feed'))
+    feed = create_feed(cu)
+    feed.sort(key=lambda x:x['date'], reverse=True)
+    page = render_template('page/feed.html', feed=feed)
+    return render_template('global/frame.html', content=page, page="feed", logged=cu)
 
 if __name__ == '__main__':
     app.secret_key = '~\xaa\xaf\xdf.\xb8d\xe6,\xdd\xfd\x8eD[\x94\xaeQku\xf6{\xa0\xd9a'

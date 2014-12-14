@@ -1,0 +1,11 @@
+<div class="container">
+    {% for item in feed %}
+    <div class="well col-md-12">
+        <span class="h4"><a href="{{ item.link }}">{{ item.title }}</a></span>
+        <small class="pull-right">{{ item.date }}</small>
+        {% if item.body %}
+        {{ item.body }}
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>

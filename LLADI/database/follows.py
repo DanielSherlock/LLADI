@@ -34,3 +34,10 @@ def remove_follow(follower, followee):
     cur.execute('DELETE FROM "Follow" WHERE "Follower" LIKE ? AND "Followee" LIKE ?', (int(follower), int(followee)))
     conn.commit()
     conn.close()
+
+def get_follow(follower, followee):
+    conn = sqlite3.connect(db_url)
+    cur = conn.cursor()
+    cur.execute('SELECT "UFID" FROM "Follow" WHERE "Follower" LIKE ? AND "Followee" LIKE ?', (int(follower), int(followee)))
+    data = cur.fetchone()
+    return data[0]
