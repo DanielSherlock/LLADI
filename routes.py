@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, session, redirect, url_for
-from LLADI.database import users, follows
+from LLADI.database import users, follows, courses
 from LLADI.functions.login import valid_login, log_in
 from LLADI.functions.users import current_user
 from LLADI.functions.register import register_user, validate_register
@@ -163,6 +163,16 @@ def feed():
     feed.sort(key=lambda x:x['date'], reverse=True)
     page = render_template('page/feed.html', feed=feed)
     return render_template('global/frame.html', content=page, page="feed", logged=cu)
+
+
+@app.route('/course/<courseid>')
+def course(courseid):
+    cu = current_user()
+    course_page = courses.Course(ucid=courseid)
+    course_owner = users.User(uuid=course_page.owner)
+    page = render_template('page/course.html', course=course_page, owner=course_owner)
+    return render_template('global/frame.html', content=page, page="feed", logged=cu)
+
 
 if __name__ == '__main__':
     app.secret_key = '~\xaa\xaf\xdf.\xb8d\xe6,\xdd\xfd\x8eD[\x94\xaeQku\xf6{\xa0\xd9a'

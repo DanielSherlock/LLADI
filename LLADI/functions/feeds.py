@@ -14,7 +14,8 @@ def create_feed(user):
             "link": "/user/" + str(fusers.uuid),
         })
         for nuser_follows in fusers.follows:
-            date = follows.Follow(ufid=follows.get_follow(nuser_follows[0], fusers.uuid)).data[0][3]
+            print(nuser_follows[0], fusers.uuid)
+            date = follows.Follow(ufid=follows.get_follow(fusers.uuid, nuser_follows[0])).data[0][3]
             follow_target = users.User(nuser_follows[0]).display_name
             if follow_target == user.display_name:
                 follow_target = "you"
@@ -25,9 +26,5 @@ def create_feed(user):
                 "body": "",
                 "link": "/user/" + str(fusers.uuid),
             })
-
-            print(date)
-            print(users.User(nuser_follows[0]).username)
-            print(fusers.username)
 
     return feed
