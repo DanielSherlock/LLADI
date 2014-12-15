@@ -36,7 +36,6 @@ class User():
 def search_user(search):
     conn = sqlite3.connect(db_url)
     cur = conn.cursor()
-    date = strftime("%Y%m%d%H%M%S", gmtime())
     cur.execute('SELECT "UUID" FROM "User" WHERE "Display Name" LIKE ?', ("%" + search + "%",))
     data = cur.fetchall()
     conn.close()
@@ -62,4 +61,6 @@ def get_tier_knowledge(course, user):
     cur.execute('SELECT "Tier" FROM "Tier Knowledge" WHERE "Course UCID" LIKE ? AND "User UUID" LIKE ?', (course, user))
     data = cur.fetchone()
     conn.close()
+    if not data:
+        return 0
     return data[0]

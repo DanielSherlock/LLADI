@@ -66,3 +66,31 @@ def get_lessons(ucid):
         sorted_lessons.append(lessons.Lesson(entry))
     sorted_lessons.sort(key=lambda x: x.tier)
     return sorted_lessons
+
+
+def search_course(search):
+    conn = sqlite3.connect(db_url)
+    cur = conn.cursor()
+    cur.execute('SELECT "UCID" FROM "Course" WHERE "Course Name" LIKE ?', ("%" + search + "%",))
+    data = cur.fetchall()
+    conn.close()
+    ret = []
+    for scourse in data:
+        ret.append(Course(ucid=int(scourse[0])))
+    return ret
+
+
+def create_course(name, owner, picture):
+    conn = sqlite3.connect(db_url)
+    cur = conn.cursor()
+    print(picture)
+    date = strftime("%Y%m%d%H%M%S", gmtime())
+    cur.execute("insert into Course('Course Name', 'Owner UUID', 'Creation Date', 'Picture') VALUES(?, ?, ?, ?)",
+                (name, int(owner), date, picture))
+    conn.commit()
+    cur.execute(
+        'SELECT "UCID" FROM "Course" WHERE "Course Name" LIKE ? AND "Owner UUID" LIKE ? AND "Creation Date" LIKE ?',
+        (name, int(owner), date))
+    data = cur.fetchone()
+    conn.close()
+    return data[0]

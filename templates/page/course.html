@@ -3,9 +3,9 @@
 
     <div class="container col-md-8 well">
         {% for lesson in lessons %}
-        <button href="/lesson/{{ lesson.ulid }}" class="btn btn-default" style="margin:5px;" {% if lesson.tier> tier+1%}disabled{% endif
-            %}>{{ lesson.name }}
-        </button>
+        <a href="/lesson/{{ lesson.ulid }}" class="btn btn-default" style="margin:5px;" {% if lesson.tier>
+            tier+1%}disabled{% endif %}>{{ lesson.name }}
+        </a>
         {% endfor %}
     </div>
     <div class="container col-md-3 col-md-offset-1 well">

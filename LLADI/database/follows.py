@@ -40,5 +40,4 @@ def get_follow(follower, followee):
     cur = conn.cursor()
     cur.execute('SELECT "UFID" FROM "Follow" WHERE "Follower" LIKE ? AND "Followee" LIKE ?', (int(follower), int(followee)))
     data = cur.fetchone()
-    print(data)
     return data[0]

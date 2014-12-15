@@ -1,0 +1,32 @@
+<div class="container">
+    <form action="/course/" method="post">
+        <div class="form-group">
+            <div class="form-group">
+                <label for="searchCourse">Search</label>
+                <input class="form-control" type="text" name="searchCourse" id="searchCourse"
+                       placeholder="Search"/>
+            </div>
+
+            <div class="form-group text-center">
+                <input class="btn btn-primary" type="submit" value="Search"/>
+            </div>
+
+        </div>
+    </form>
+
+    <div class="container well col-md-12">
+
+        <h3>Results</h3>
+        <ul class="list-unstyled">
+            {% if results %}
+            {% for course in results %}
+            <li>
+                <img src="data:image/png;base64, {{ course.picture|safe }}" class="img-circle"
+                     style="height:3em;width:3em;"/>
+                <a href="/course/{{ course.ucid }}">{{ course.course_name }}</a>
+            </li>
+            {% endfor %}
+            {% endif %}
+        </ul>
+    </div>
+</div>

@@ -5,6 +5,7 @@ from LLADI.functions.users import current_user
 from LLADI.functions.register import register_user, validate_register
 from LLADI.functions.follow import validate_follow
 from LLADI.functions.feeds import create_feed
+import base64
 
 import re
 
@@ -117,7 +118,6 @@ def user(userid):
         for check_user in user_followed_by:
             if check_user.uuid == cu.uuid:
                 following = "True"
-    print(following)
     page = render_template('page/userpage.html', user=pu, logged=cu, follows=user_follows, followed_by=user_followed_by,
                            following=following)
     return render_template('global/frame.html', content=page, page="user", logged=cu)
@@ -135,6 +135,20 @@ def user_search():
         cu = current_user()
         page = render_template('page/usersearch.html')
         return render_template('global/frame.html', content=page, page="user", logged=cu)
+
+
+@app.route('/course/', methods=['GET', 'POST'])
+def course_search():
+    if request.method == "POST":
+        results = courses.search_course(request.form['searchCourse'])
+        cu = current_user()
+        page = render_template('page/coursesearch.html', results=results)
+        return render_template('global/frame.html', content=page, page="course", logged=cu)
+
+    else:
+        cu = current_user()
+        page = render_template('page/coursesearch.html')
+        return render_template('global/frame.html', content=page, page="course", logged=cu)
 
 
 @app.route('/follow/', methods=['GET', 'POST'])
@@ -180,7 +194,38 @@ def course(courseid):
         contributors.append(users.User(uuid=entry))
     page = render_template('page/course.html', course=course_page, owner=course_owner, contributors=contributors,
                            lessons=lessons, tier=tier)
-    return render_template('global/frame.html', content=page, page="feed", logged=cu)
+    return render_template('global/frame.html', content=page, page="course", logged=cu)
+
+
+@app.route('/lesson/')
+def lesson_redirect():
+    return redirect(url_for('course_search'))
+
+
+@app.route('/create/course/', methods=['GET', 'POST'])
+def create_course():
+    cu = current_user()
+    if not cu:
+        return redirect(url_for('login') + "?next=" + request.url)
+    if request.method == "POST":
+        create_course_name = request.form['createCourseName']
+        create_course_owner = cu.uuid
+        create_course_picture = str(base64.encodebytes(request.files['createCoursePicture'].stream.read())).strip(
+            "b'").strip("'").replace("\\n", "\n")
+        return redirect(
+            "/course/" + str(courses.create_course(create_course_name, create_course_owner, create_course_picture)))
+    else:
+        page = render_template('page/createcourse.html')
+        return render_template('global/frame.html', content=page, page="course", logged=cu)
+
+
+@app.route('/lesson/<lessonid>')
+def lesson(lessonid):
+    cu = current_user()
+    if not cu:
+        return redirect(url_for('login') + "?next=" + request.url)
+    page = "hello"
+    return render_template('global/frame.html', content=page, page="course", logged=cu)
 
 
 if __name__ == '__main__':
