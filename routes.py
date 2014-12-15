@@ -158,9 +158,9 @@ def unfollow():
 def feed():
     cu = current_user()
     if not cu:
-        return redirect(url_for('login')+"?next=" + url_for('feed'))
+        return redirect(url_for('login') + "?next=" + url_for('feed'))
     feed = create_feed(cu)
-    feed.sort(key=lambda x:x['date'], reverse=True)
+    feed.sort(key=lambda x: x['date'], reverse=True)
     page = render_template('page/feed.html', feed=feed)
     return render_template('global/frame.html', content=page, page="feed", logged=cu)
 
@@ -168,9 +168,18 @@ def feed():
 @app.route('/course/<courseid>')
 def course(courseid):
     cu = current_user()
+    if not cu:
+        return redirect(url_for('login') + "?next=" + request.url)
     course_page = courses.Course(ucid=courseid)
     course_owner = users.User(uuid=course_page.owner)
-    page = render_template('page/course.html', course=course_page, owner=course_owner)
+    contributor_uuids = courses.get_contributors(courseid)
+    lessons = courses.get_lessons(courseid)
+    tier = users.get_tier_knowledge(courseid, cu.uuid)
+    contributors = []
+    for entry in contributor_uuids:
+        contributors.append(users.User(uuid=entry))
+    page = render_template('page/course.html', course=course_page, owner=course_owner, contributors=contributors,
+                           lessons=lessons, tier=tier)
     return render_template('global/frame.html', content=page, page="feed", logged=cu)
 
 

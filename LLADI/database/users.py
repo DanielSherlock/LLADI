@@ -37,13 +37,14 @@ def search_user(search):
     conn = sqlite3.connect(db_url)
     cur = conn.cursor()
     date = strftime("%Y%m%d%H%M%S", gmtime())
-    cur.execute('SELECT "UUID" FROM "User" WHERE "Display Name" LIKE ?', ("%"+search+"%",))
+    cur.execute('SELECT "UUID" FROM "User" WHERE "Display Name" LIKE ?', ("%" + search + "%",))
     data = cur.fetchall()
     conn.close()
     ret = []
     for suser in data:
         ret.append(User(int(suser[0])))
     return ret
+
 
 def new_user(username, password, display_name):
     conn = sqlite3.connect(db_url)
@@ -53,3 +54,12 @@ def new_user(username, password, display_name):
                 (username, password, display_name, date))
     conn.commit()
     conn.close()
+
+
+def get_tier_knowledge(course, user):
+    conn = sqlite3.connect(db_url)
+    cur = conn.cursor()
+    cur.execute('SELECT "Tier" FROM "Tier Knowledge" WHERE "Course UCID" LIKE ? AND "User UUID" LIKE ?', (course, user))
+    data = cur.fetchone()
+    conn.close()
+    return data[0]

@@ -1,4 +1,20 @@
 <div class="container">
     <h3>{{ course.course_name }}</h3>
-    <h4><a href="/user/{{ owner.uuid }}">{{ owner.display_name }}</a></h4>
+
+    <div class="container col-md-8 well">
+        {% for lesson in lessons %}
+        <button href="/lesson/{{ lesson.ulid }}" class="btn btn-default" style="margin:5px;" {% if lesson.tier> tier+1%}disabled{% endif
+            %}>{{ lesson.name }}
+        </button>
+        {% endfor %}
+    </div>
+    <div class="container col-md-3 col-md-offset-1 well">
+        <h4>Contributors</h4>
+        <ul class="list-unstyled">
+            <li><h5><strong><a href="/user/{{ owner.uuid }}">{{ owner.display_name }}</a></strong></h5></li>
+            {% for contributor in contributors %}
+            <li><h5><a href="/user/{{ contributor.uuid }}">{{ contributor.display_name }}</a></h5></li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
