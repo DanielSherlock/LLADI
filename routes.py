@@ -212,10 +212,30 @@ def create_course():
         create_course_owner = cu.uuid
         create_course_picture = str(base64.encodebytes(request.files['createCoursePicture'].stream.read())).strip(
             "b'").strip("'").replace("\\n", "\n")
+        errors = []
+        if len(create_course_name) < 3:
+            errors.append('course_name_length')
+        if request.files['createCoursePicture'].filename.split(".")[-1] != "png":
+            errors.append('image_type')
+        if courses.Course(course_name=create_course_name).exists:
+            errors.append('course_name_unique')
+        query_string = "?"
+        for error in errors:
+            query_string += error + "=1&"
+        query_string.strip("&")
+        if len(errors):
+            return redirect(url_for('create_course') + query_string)
         return redirect(
             "/course/" + str(courses.create_course(create_course_name, create_course_owner, create_course_picture)))
     else:
-        page = render_template('page/createcourse.html')
+        errors = []
+        if request.args.get('course_name_length'):
+            errors.append('course_name_length')
+        if request.args.get('image_type'):
+            errors.append('image_type')
+        if request.args.get('course_name_unique'):
+            errors.append('course_name_unique')
+        page = render_template('page/createcourse.html', errors=errors)
         return render_template('global/frame.html', content=page, page="course", logged=cu)
 
 
