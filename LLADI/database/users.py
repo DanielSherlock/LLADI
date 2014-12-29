@@ -15,7 +15,6 @@ class User():
         elif username:
             cur.execute('SELECT * FROM "User" WHERE "Username" LIKE ?', (username,))
         data = cur.fetchone()
-        conn.close()
         if data:
             self.exists = True
             self.uuid = data[0]
@@ -26,8 +25,14 @@ class User():
             self.date = data[5]
             self.follows = follows.Follow(follower=self.uuid).data
             self.followed_by = follows.Follow(followee=self.uuid).data
+            cur.execute('SELECT "Key UKID", "Knowledge" FROM "Key Knowledge" WHERE "User UUID" LIKE ?', (self.uuid,))
+            self.keys = {}
+            for key in cur.fetchall():
+                self.keys[key[0]] = key[1]
+            print(self.keys)
         else:
             self.exists = False
+        conn.close()
 
     def __del__(self):
         pass

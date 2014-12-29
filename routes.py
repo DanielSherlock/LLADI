@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, session, redirect, url_for
-from LLADI.database import users, follows, courses
+from LLADI.database import users, follows, courses, lessons
 from LLADI.functions.login import valid_login, log_in
 from LLADI.functions.users import current_user
 from LLADI.functions.register import register_user, validate_register
@@ -193,7 +193,7 @@ def course(courseid):
     for entry in contributor_uuids:
         contributors.append(users.User(uuid=entry))
     page = render_template('page/course.html', course=course_page, owner=course_owner, contributors=contributors,
-                           lessons=lessons, tier=tier)
+                           lessons=lessons, tier=tier, logged=cu)
     return render_template('global/frame.html', content=page, page="course", logged=cu)
 
 
@@ -239,6 +239,18 @@ def create_course():
         return render_template('global/frame.html', content=page, page="course", logged=cu)
 
 
+@app.route('/create/course/<courseid>/lesson/')
+def create_lesson(courseid):
+    cu = current_user()
+    if not cu:
+        return redirect(url_for('login') + "?next=" + request.url)
+    cc = courses.Course(ucid=courseid)
+    if cu.uuid != cc.owner and str(cu.uuid) not in courses.get_contributors(cc.ucid):
+        return redirect(url_for('course', courseid=courseid))
+    page = 'lesson_creator'
+    return render_template('global/frame.html', content=page, page="course", logged=cu)
+
+
 @app.route('/lesson/<lessonid>')
 def lesson(lessonid):
     cu = current_user()
@@ -246,6 +258,7 @@ def lesson(lessonid):
         return redirect(url_for('login') + "?next=" + request.url)
     page = "hello"
     return render_template('global/frame.html', content=page, page="course", logged=cu)
+
 
 
 if __name__ == '__main__':

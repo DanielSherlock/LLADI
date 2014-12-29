@@ -1,0 +1,30 @@
+<div class="container">
+    {% if errors %}
+    <div class="bg-danger h6" style="padding:10px;">
+        <ul class="" style="margin:0;">
+            {% if 'course_name_length' in errors %}
+            <li>Course Name must be at least 3 Characters Long</li>
+            {% endif %}
+            {% if 'image_type' in errors %}
+            <li>Image must be PNG</li>
+            {% endif %}
+            {% if 'course_name_unique' in errors %}
+            <li>Course by that name Already Exists</li>
+            {% endif %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <form action="/create/course/" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="createCourseName">Course Name</label>
+            <input class="form-control" type="text" name="createCourseName" id="createCourseName"
+                   placeholder="Course Name"/>
+        </div>
+        <div class="form-group">
+            <label for="createCoursePicture">Upload Course Picture (.png, square)</label>
+            <input type="file" class="form-control" name="createCoursePicture" id="createCoursePicture"/>
+        </div>
+        <div class="form-group"><input class="form-control btn btn-primary" type="submit" value="Create Course"/></div>
+    </form>
+</div>

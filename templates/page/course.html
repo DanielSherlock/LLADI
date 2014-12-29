@@ -7,6 +7,22 @@
             tier+1%}disabled{% endif %}>{{ lesson.name }}
         </a>
         {% endfor %}
+        {% if logged.uuid == owner.uuid %}
+        <br>
+        <a class="btn btn-info clearfix" href="/create/course/{{ course.ucid }}/lesson" style="margin:5px;">Create a
+            Lesson</a>
+        <a class="btn btn-info clearfix" href="/edit/course/{{ course.ucid }}/lesson" style="margin:5px;">Edit a
+            Lesson</a>
+        {% endif %}
+        {% for contributor in contributors %}
+        {% if logged.uuid == contributor.uuid %}
+        <br>
+        <a class="btn btn-info clearfix" href="/create/course/{{ course.ucid }}/lesson" style="margin:5px;">Create a
+            Lesson</a>
+        <a class="btn btn-info clearfix" href="/edit/course/{{ course.ucid }}/lesson" style="margin:5px;">Edit a
+            Lesson</a>
+        {% endif%}
+        {% endfor %}
     </div>
     <div class="container col-md-3 col-md-offset-1 well">
         <h4>Contributors</h4>
@@ -15,6 +31,7 @@
             {% for contributor in contributors %}
             <li><h5><a href="/user/{{ contributor.uuid }}">{{ contributor.display_name }}</a></h5></li>
             {% endfor %}
+
         </ul>
     </div>
 </div>
