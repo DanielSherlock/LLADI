@@ -3,7 +3,7 @@ from time import strftime, gmtime
 from LLADI.functions.users import current_user
 from . import lessons
 
-db_url = 'C:\\Users\\Sam\\Desktop\\LLADI\\database\\lladi.db'
+db_url = 'C:\\Users\\Daniel\\Documents\\GitHub\\LLADI\\database\\lladi.db'
 
 
 class Course:

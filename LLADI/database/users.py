@@ -3,7 +3,7 @@ import base64
 from time import strftime, gmtime
 from . import follows
 
-db_url = 'C:\\Users\\Sam\\Desktop\\LLADI\\database\\lladi.db'
+db_url = 'C:\\Users\\Daniel\\Documents\\GitHub\\LLADI\\database\\lladi.db'
 
 
 class User():
